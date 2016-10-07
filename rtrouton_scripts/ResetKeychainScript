@@ -1,0 +1,35 @@
+#!/bin/bash
+# Made by Jason Content can be contacted on jasoncontent@googlemail.com
+# Get the currently logged in user
+user=`ls -l /dev/console | cut -d " " -f4`
+
+# Display the dialog to the user
+x=`/usr/bin/osascript <<EOT
+tell application "Finder"
+        activate
+        set myReply to button returned of (display dialog "This will delete your keychain login and everything in it. \nYou will then be forced to Restart! \nClick Cancel to save your work. \nYou will need to run this again from Self-Service or click Do it! to continue and wait for confirmation." buttons {"Cancel" , "Do it!"} default button "Cancel")
+end tell
+EOT`
+
+
+# Delete the login.keychain as the currently logged in user
+rm -rf ~/Library/Keychains/login.keychain
+	
+
+#pause for 5 seconds to allow for message box
+sleep 5
+
+# Displaying a message to tell the user it has finished
+x=`/usr/bin/osascript <<EOT
+tell application "Finder"
+display dialog "Your Machine is Going to Restart"
+end tell
+EOT`
+
+# Log out and restart
+killall "Self Service"
+x=`/usr/bin/osascript <<EOT
+tell app "System Events"
+restart
+end tell
+EOT`
